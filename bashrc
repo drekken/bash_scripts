@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# This script is something I've compiled over the course of my year and a half at Wayfair.
-# It's not intended to be an end-all solution to all of your bash problems, but in my
-# opinion it's a good a place as any to find some neat tricks when working with our code.
-
 # Going line-by-line, I'll explain what each thing does and how it relates to the rest of
 # the file. If you have any comments or suggestions, feel free to let me know! I've
 # borrowed ideas from a number of people and I will be the first to admit that I am not
@@ -21,6 +17,7 @@ export CLICOLOR=1
 # --------- Utility Aliases --------- #
 # overrides grep with some regularly used flags
 alias grep='grep -lnr --color'
+alias python=python3
 
 ####Color Variables:
 # These are used to decorate outputs later on.
@@ -56,7 +53,7 @@ printbranch="printf ${CYAN}Branches:${NC}\n"
 # --------- Base Commands --------- #
 # I really hate typing: `vim ~/.bashrc` and `source ~/.bashrc`, so I made it `ba` and `so`.
 # I had the sourcing print something just in case it gets stuck somewhere
-BASHRCLOCATION="/Users/akoziak/.bashrc"
+BASHRCLOCATION="/Users/alexkoziak/.bashrc"
 alias ba="vim ${BASHRCLOCATION}"
 alias so="printf '${PURPLE}Sourcing...${NC}' && source ${BASHRCLOCATION}"
 
@@ -65,22 +62,22 @@ alias so="printf '${PURPLE}Sourcing...${NC}' && source ${BASHRCLOCATION}"
 # this. The `${WORKLOCATION}` variable is also usable everywhere, not just here. It is the
 # full root path to your working directory (where your git repos are)
 # make sure you update this!
-WORKLOCATION="/Users/akoziak/Wayfair/"
+WORKLOCATION="/Users/alexkoziak/xpo/django/"
 
 # A list of the repos currently being used. If you want to implement some sort of project-based
 # repo set, make this a variable that gets changed based on workspace.
-REPOS="php resources templates"
+REPOS="xpo-django dotcom-drive-for-us dotcom-ethics x-core dotcom-styleguide dotcom-helpdesk"
 
 # makes the aliases: gophp gores gotem
-for repo in ${REPOS}
-do
+#for repo in ${REPOS}
+#do
   # shortens the repository names to 3 characters
-  short=${repo:0:3}
+#  short=${repo:0:3}
   # creates an alias per repository that will change directory.
   # Example output:
   # alias gophp="cd /Users/akoziak/Wayfair/php"
-  alias go$short="cd ${WORKLOCATION}$repo"
-done
+#  alias go$short="cd ${WORKLOCATION}$repo"
+#done
 
 all_repos () {
   # at the end of this function, we want to return to the directory the command was run from
@@ -105,6 +102,23 @@ all_repos () {
   cd $current_location
 }
 
+REPO_ABBREVIATIONS="com cor eth dri sty hel"
+
+alias runserver="python manage.py runserver 0.0.0.0:8080"
+
+alias gocom="cd ${WORKLOCATION}xpo-django/XPO_Com && source ${WORKLOCATION}/xpo-django/venv/bin/activate"
+alias gocor="cd ${WORKLOCATION}x-core"
+alias goeth="cd ${WORKLOCATION}dotcom-ethics/ethics && source ${WORKLOCATION}/dotcom-ethics/venv/bin/activate"
+alias godri="cd ${WORKLOCATION}dotcom-drive-for-us/drive_for_us_project && source ${WORKLOCATION}/dotcom-drive-for-us/venv/bin/activate" 
+alias gosty="cd ${WORKLOCATION}dotcom-styleguide/project && source ${WORKLOCATION}/dotcom-styleguide/venv/bin/activate"
+alias gohel="cd ${WORKLOCATION}dotcom-helpdesk/project && source ${WORKLOCATION}/dotcom-helpdesk/venv/bin/activate"
+
+for abbr in ${REPO_ABBREVIATIONS}
+do
+  # Uses the go-abbreviations to create a quick runserver alias
+  alias run${abbr}="go${abbr} && runserver"
+done
+
 #### Use cases of `all_repos`
 # `all_repos "git status"`
 # `all_repos "git checkout master" "git fetch" "git pull"`
@@ -121,6 +135,7 @@ alias gitlogstat="git log --oneline --stat" # number of lines changed
 alias gitloggraph="git log --oneline --graph" # graph view of branches
 
 # ---- general ---- #
+alias ls="ls -la"
 alias gits="git status"
 alias gitc="git commit -m"
 alias gitp="git push -u origin HEAD"
@@ -128,8 +143,10 @@ alias gitac="git add -A && git commit -m"
 alias gitcleanup="git gc --auto --prune" # shouldn't need to do this
 alias gitprune="git remote prune origin" # not really necessary to do unless you have a large codebase
 alias diffn="git diff --name-only origin/master"
-alias branch='for k in `git branch|perl -pe s/^..//`;do echo -e `git show --pretty=format:"%Cgreen%ci %Cred%cr%Creset" $k|head -n 1`\\t$k;done|sort -r'
+alias brs='for k in `git branch|perl -pe s/^..//`;do echo -e `git show --pretty=format:"%Cgreen%ci %Cred%cr%Creset" $k|head -n 1`\\t$k;done|sort -r'
 br="git branch -lvv"
+alias virt="source ${WORKLOCATION}/xpo-django/venv/bin/activate && cd ${WORKLOCATION}/xpo-django/XPO_Com"
+
 
 # ------ functions ------ #
 gitm () { git fetch && git merge origin/master; }
